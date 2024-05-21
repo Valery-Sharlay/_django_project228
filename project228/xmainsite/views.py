@@ -1,4 +1,3 @@
-from django.contrib.sitemaps.views import index
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import DetailView, ListView, CreateView
@@ -72,15 +71,3 @@ def page_not_found(request, exception):
 #     title_page = 'Редактирование статьи'
 
 
-# class TagPostList(DataMixin, ListView):
-#     template_name = 'women/index.html'
-#     context_object_name = 'posts'
-#     allow_empty = False
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         tag = TagPost.objects.get(slug=self.kwargs['tag_slug'])
-#         return self.get_mixin_context(context, title='Тег: ' + tag.tag)
-#
-#     def get_queryset(self):
-#         return Women.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
