@@ -1,0 +1,7 @@
+{% for t in types %}
+    {% if t.id == type_selected %}
+        <li class="selected">{{t.pctype_name}}</li>
+    {% else %}
+        <li><a href="{{ t.get_absolute_url }}">{{t.pctype_name}}</a></li>
+    {% endif %}
+{% endfor %}

@@ -1,0 +1,78 @@
+{% load static %}
+{% load xms_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> {{ title }}</title>
+    <link type="text/css" href="{% static 'xmainsite/css/styles.css' %}" rel="stylesheet" />
+    <link rel="shortcut icon" href="{% static 'xmainsite/images/logo60.ico' %}" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr><td valign=top>
+
+{% block mainmenu %}
+    <div class="header">
+        <ul id="menu_top" class="menu_top">
+            <li class="logo"><a href="{% url 'index' %}"><div class="logo"></div></a></li>
+        
+    {% for m in menu_top %}
+	        {% if not forloop.last %}
+                <li>
+            {% else %}
+                <li class="last">
+            {% endif %}
+        <a href="{% url m.url_name %}">{{m.title}}</a></li>
+    {% endfor %}
+        
+		</ul>
+			<div class="clear"></div>
+	</div>
+{% endblock mainmenu %}
+
+<table class="table-content" border=0 cellpadding="0" cellspacing="0">
+<tr>
+
+<!-- Sidebar слева -->
+<td valign="top" class="left_menu">
+	<ul id="left_menu">
+		{% if type_selected == 0 or type_selected is None %}
+		    <li class="selected">Все типы</li>
+		{% else %}
+		    <li><a href="{% url 'index' %}">Все типы</a></li>
+		{% endif %}
+		    {% show_types type_selected %}
+ 	</ul>
+</td>
+<!-- Конец Sidebar'а -->
+
+<td valign="top" class="content">
+	<!-- Хлебные крошки -->
+	{% block breadcrumbs %}
+	{% endblock %}
+
+<!-- Блок контента -->
+	<div class="content-text">
+        {% block content %}
+        {% endblock %}
+	</div>
+<!-- Конец блока контента -->
+
+</td></tr>
+</table>
+
+<!-- Footer -->
+<tr><td valign=top>
+	<div id="footer">
+		<p>&copy; Валерий Шарлай. OverOne.by группа 228. Преподаватель: Егор Ралович. май 2024</p>
+	</div>
+    
+</td></tr>
+
+</table>
+</body>
+</html>

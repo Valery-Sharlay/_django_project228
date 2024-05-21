@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{#{% block breadcrumbs %}#}
+{#{% endblock %}#}
+
+{% block content %}
+<h1>{{ object.pc_model }}</h1>
+
+{% if object.pc_photo %}
+    <p><img class="img-article-left" src="{{ object.pc_photo.url }}" alt="No Image"></p>
+{% endif %}
+
+{{object.pc_about|linebreaks}}
+
+{% endblock %}

@@ -1,0 +1,134 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.template.defaultfilters import slugify
+from django.views.generic import DetailView
+
+import xmainsite
+from .models import BasePC, PCCategory
+from .forms import AddPCForm
+from .utils import DataMixin
+
+menu_top = [
+    {'title': "Add", 'url_name': 'add'},
+    {'title': "About", 'url_name': 'about'},
+    {'title': "Login", 'url_name': 'login'},
+]
+
+
+@csrf_exempt
+def index(request):
+    posts = BasePC.objects.filter(pc_pub=1)
+
+    data = {
+        'title': 'Главная страница',
+        'menu': menu_top,
+        'posts': posts,
+        'cat_selected': 0,
+    }
+    return render(request, 'xmainsite/index.html', context=data)
+
+
+@csrf_exempt
+# def show_post(request, post_slug):
+#     post = get_object_or_404(BasePC, pc_slug=post_slug)
+#     data = {
+#         'title': post.pc_model,
+#         'menu': menu_top,
+#         'post': post,
+#         'cat_selected': 1,
+#     }
+#     return render(request, 'xmainsite/post.html', data)
+class ShowPost(DataMixin, DetailView):
+    template_name = 'xmainsite/post.html'
+    slug_url_kwarg = 'pc_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return self.get_mixin_context(context, title=context['post'].pc_model)
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(xmainsite.pc_pub, slug=self.kwargs[self.slug_url_kwarg])
+
+@csrf_exempt
+def show_category(request, cat_slug):
+    category = get_object_or_404(PCCategory, cat_slugg=cat_slug)
+    posts = BasePC.objects.filter(pc_pub=1)
+    ppp = posts.filter(pc_type_id=category)
+    data = {
+        'title': f'Кат. {category.cat_name}',
+        'menu': menu_top,
+        'posts': ppp,
+        'cat_selected': category,
+    }
+    return render(request, 'xmainsite/index.html', context=data)
+
+
+@csrf_exempt
+def about(request):
+    data = {
+        'title': 'About',
+        'menu': menu_top,
+    }
+    return render(request, 'xmainsite/about.html', data)
+
+
+@csrf_exempt
+def add(request):
+    if request.method == 'POST':
+        form = AddPCForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = AddPCForm()
+
+    data = {
+        'menu': menu_top,
+        'title': 'Добавление',
+        'form': form
+    }
+    return render(request, 'xmainsite/addpc.html', data)
+
+
+# @csrf_exempt
+# class AddPc(View):
+#     def get(self, request):
+#         form = AddPCForm()
+#         data = {
+#             'menu': menu_top,
+#             'title': 'Добавление',
+#             'form': form
+#         }
+#         return render(request, 'xmainsite/addpc.html', data)
+#
+#     def post(self, request):
+#         form = AddPCForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('index')
+#         data = {
+#             'menu': menu_top,
+#             'title': 'Добавление',
+#             'form': form
+#         }
+#         return render(request, 'xmainsite/addpc.html', data)
+
+
+@csrf_exempt
+def login(request):
+    return HttpResponse('Login')
+
+
+@csrf_exempt
+def page403(request, exception):
+    return render(request, 'page403.html', status=403)
+
+
+@csrf_exempt
+def page404(request, exception):
+    return render(request, 'page404.html', status=404)

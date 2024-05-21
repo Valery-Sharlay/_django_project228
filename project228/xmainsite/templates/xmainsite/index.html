@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<ul class="list-articles">
+	{% for p in object_list %}
+        <li>
+            <div class="article-panel">
+	            <p class="first">Категория: {{p.pc_type.pctype_name}}</p>
+                <p class="last">Дата: {{ p.pc_date_update|date:'Y-m-d' }}</p>
+            </div>
+
+	        {% if p.pc_pub %}
+                {% if p.pc_photo %}
+		            <p><img class="img-article-left thumb" src="{{p.pc_photo.url}}"></p>
+                {% endif %}
+
+                <h2>{{p.pc_model}}</h2>
+                    {% autoescape off %}
+	                    {{p.pc_about|linebreaks|truncatewords:7}}
+                    {% endautoescape %}
+
+			<div class="clear"></div>
+
+			    <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Подробнее</a></p>
+        </li>
+            {% endif %}
+	{% endfor %}
+</ul>
+
+{% endblock %}
+
